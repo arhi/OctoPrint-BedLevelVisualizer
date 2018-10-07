@@ -66,14 +66,7 @@ class bedlevelvisualizer(octoprint.plugin.StartupPlugin,
 		return
 	
 	def processGCODE(self, comm, line, *args, **kwargs):
-		if self.processing and "ok" not in line and re.match(r"^((G33.+)|(Bed.+)|(\d+\s)|(\|\s+)|(\[?\s?\+?\-?\d?\.\d+\]?\s*\,?)|(\s?\.\s*)|(NAN\,?))+$", line.strip()):
-			# new_line = re.sub(r"(\[ ?)+","",line.strip())
-			# new_line = re.sub(r"[\]NA\)\(]","",new_line)
-			# new_line = re.sub(r"( +)|\,","\t",new_line)
-			# new_line = re.sub(r"(\.\t)","\t",new_line)
-			# new_line = re.sub(r"\.$","",new_line)
-			# new_line = new_line.split("\t")
-			
+		if self.processing and "ok" not in line and re.match(r"^((G33.+)|(Bed.+)|(\d+\s)|(\|\s+)|([\d.]+\|\s+)|(\[?\s?\+?\-?\d?\.\d+\]?\s*\,?)|(\s?\.\s*)|(NAN\,?))+$", line.strip()):
 			new_line = re.findall(r"(\+?\-?\d*\.\d*)",line)
 			
 			if re.match(r"^Bed x:.+$", line.strip()):
