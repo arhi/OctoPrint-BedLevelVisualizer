@@ -66,14 +66,8 @@ class bedlevelvisualizer(octoprint.plugin.StartupPlugin,
 		return
 	
 	def processGCODE(self, comm, line, *args, **kwargs):
-		if self.processing and "ok" not in line and re.match(r"^((G33.+)|(Bed.+)|(\d+\s)|(\|\s+)|(\[?\s?\+?\-?\d?\.\d+\]?\s*\,?)|(\s?\.\s*)|(NAN\,?))+$", line.strip()):
-			# new_line = re.sub(r"(\[ ?)+","",line.strip())
-			# new_line = re.sub(r"[\]NA\)\(]","",new_line)
-			# new_line = re.sub(r"( +)|\,","\t",new_line)
-			# new_line = re.sub(r"(\.\t)","\t",new_line)
-			# new_line = re.sub(r"\.$","",new_line)
-			# new_line = new_line.split("\t")
-			
+		if self.processing and "ok" not in line and re.match(r"^\s*(\d+\.\d+\s*)(\|\s*)[\+?\-?\d+\.\d+\s+]+$", line.strip()):
+
 			new_line = re.findall(r"(\+?\-?\d*\.\d*)",line)
 			
 			if re.match(r"^Bed x:.+$", line.strip()):
@@ -98,7 +92,7 @@ class bedlevelvisualizer(octoprint.plugin.StartupPlugin,
 			self.processing = False
 			return line
 		
-		if self.processing and ("ok" in line or (self.repetier_firmware and "T:" in line)) and len(self.mesh) > 0:
+		if self.processing and ("ok" in line or re.match(r"^\s*-----", line.strip()) or (self.repetier_firmware and "T:" in line)) and len(self.mesh) > 0:
 			octoprint_printer_profile = self._printer_profile_manager.get_current()
 			volume = octoprint_printer_profile["volume"]
 			bed_type = volume["formFactor"]			
@@ -156,17 +150,17 @@ class bedlevelvisualizer(octoprint.plugin.StartupPlugin,
 	def get_update_information(self):
 		return dict(
 			bedlevelvisualizer=dict(
-				displayName="Bed Visualizer",
+				displayName="Bed Visualizer SMOOTHIEWARE",
 				displayVersion=self._plugin_version,
 
 				# version check: github repository
 				type="github_release",
-				user="jneilliii",
+				user="arhi",
 				repo="OctoPrint-BedLevelVisualizer",
 				current=self._plugin_version,
 
 				# update method: pip
-				pip="https://github.com/jneilliii/OctoPrint-BedLevelVisualizer/archive/{target_version}.zip"
+				pip="https://github.com/arhi/OctoPrint-BedLevelVisualizer/archive/{target_version}.zip"
 			)
 		)
 
